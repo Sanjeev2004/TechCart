@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../store/store';
-import api from '../../services/api';
+import { RootState } from '@/store/store';
+import api from '@/services/api';
 import { Loader2, Download, CheckCircle, XCircle } from 'lucide-react';
 import Link from 'next/link';
 
@@ -145,7 +145,7 @@ export default function OrderDetailsPage() {
                     </Link>
                   </div>
                   <div className="text-gray-700 font-medium">
-                    {item.quantity} x ${item.price.toFixed(2)} = ${(item.quantity * item.price).toFixed(2)}
+                    {item.quantity} x ₹{item.price.toFixed(2)} = ₹{(item.quantity * item.price).toFixed(2)}
                   </div>
                 </li>
               ))}
@@ -159,19 +159,19 @@ export default function OrderDetailsPage() {
             <div className="space-y-3 text-gray-700 mb-6">
               <div className="flex justify-between">
                 <span>Items:</span>
-                <span>${order.itemsPrice.toFixed(2)}</span>
+                <span>₹{order.itemsPrice.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Shipping:</span>
-                <span>${order.shippingPrice.toFixed(2)}</span>
+                <span>₹{order.shippingPrice.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Tax:</span>
-                <span>${order.taxPrice.toFixed(2)}</span>
+                <span>₹{order.taxPrice.toFixed(2)}</span>
               </div>
               <div className="flex justify-between font-bold text-xl text-gray-900 pt-4 border-t">
                 <span>Total:</span>
-                <span>${order.totalPrice.toFixed(2)}</span>
+                <span>₹{order.totalPrice.toFixed(2)}</span>
               </div>
             </div>
 
@@ -182,7 +182,7 @@ export default function OrderDetailsPage() {
                   disabled={paying}
                   className="w-full bg-green-600 text-white font-bold py-3 rounded-full hover:bg-green-700 transition flex justify-center items-center"
                 >
-                  {paying ? <Loader2 className="w-5 h-5 animate-spin" /> : `Pay $${order.totalPrice.toFixed(2)} (Mock)`}
+                  {paying ? <Loader2 className="w-5 h-5 animate-spin" /> : `Pay ₹${order.totalPrice.toFixed(2)} (Mock)`}
                 </button>
               </div>
             )}

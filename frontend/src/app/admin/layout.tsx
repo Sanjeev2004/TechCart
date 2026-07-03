@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../../store/store';
+import { RootState } from '@/store/store';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { LayoutDashboard, ShoppingBag, Users, ListOrdered } from 'lucide-react';

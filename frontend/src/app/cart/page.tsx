@@ -2,15 +2,24 @@
 
 import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../store/store';
-import { addToCart, removeFromCart } from '../../store/slices/cartSlice';
+import { RootState } from '@/store/store';
+import { addToCart, removeFromCart } from '@/store/slices/cartSlice';
 import { Trash2, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+
+import { useEffect, useState } from 'react';
 
 export default function CartPage() {
   const router = useRouter();
   const dispatch = useDispatch();
   const { cartItems } = useSelector((state: RootState) => state.cart);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const { userInfo } = useSelector((state: RootState) => state.auth);
 
   const updateQuantity = (item: any, quantity: number) => {
     dispatch(addToCart({ ...item, quantity }));
@@ -21,14 +30,22 @@ export default function CartPage() {
   };
 
   const checkoutHandler = () => {
-    router.push('/login?redirect=/shipping');
+    if (userInfo) {
+      router.push('/shipping');
+    } else {
+      router.push('/login?redirect=/shipping');
+    }
   };
 
   return (
     <div className="max-w-6xl mx-auto py-8">
       <h1 className="text-3xl font-extrabold text-gray-900 mb-8">Shopping Cart</h1>
 
-      {cartItems.length === 0 ? (
+      {!mounted ? (
+        <div className="bg-white p-12 text-center rounded-2xl shadow-sm border border-gray-100">
+          <p className="text-gray-500 text-lg mb-6">Loading cart...</p>
+        </div>
+      ) : cartItems.length === 0 ? (
         <div className="bg-white p-12 text-center rounded-2xl shadow-sm border border-gray-100">
           <p className="text-gray-500 text-lg mb-6">Your cart is currently empty.</p>
           <Link href="/">
@@ -48,7 +65,7 @@ export default function CartPage() {
                     <Link href={`/product/${item.product}`}>
                       <span className="font-semibold text-lg hover:text-blue-600 transition line-clamp-1">{item.name}</span>
                     </Link>
-                    <p className="text-gray-500 font-medium">${item.price.toFixed(2)}</p>
+                    <p className="text-gray-500 font-medium">₹{item.price.toFixed(2)}</p>
                   </div>
                 </div>
 
@@ -80,7 +97,7 @@ export default function CartPage() {
               <div className="space-y-3 mb-6 text-gray-600">
                 <div className="flex justify-between">
                   <span>Items ({cartItems.reduce((acc, item) => acc + item.quantity, 0)}):</span>
-                  <span>${cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0).toFixed(2)}</span>
+                  <span>₹{cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping:</span>
@@ -88,7 +105,7 @@ export default function CartPage() {
                 </div>
                 <div className="flex justify-between font-bold text-xl text-gray-900 pt-4 border-t">
                   <span>Total:</span>
-                  <span>${cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0).toFixed(2)}</span>
+                  <span>₹{cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0).toFixed(2)}</span>
                 </div>
               </div>
 

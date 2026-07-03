@@ -1,15 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../store/store';
-import { setCredentials } from '../../store/slices/authSlice';
-import api from '../../services/api';
+import { RootState } from '@/store/store';
+import { setCredentials } from '@/store/slices/authSlice';
+import api from '@/services/api';
 import { Loader2 } from 'lucide-react';
 
 const registerSchema = z.object({
@@ -32,9 +32,14 @@ export default function Register() {
   
   const { userInfo } = useSelector((state: RootState) => state.auth);
 
-  if (userInfo) {
-    router.push('/');
-  }
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect') || '/';
+
+  useEffect(() => {
+    if (userInfo) {
+      router.push(redirect);
+    }
+  }, [userInfo, router, redirect]);
 
   const { register, handleSubmit, formState: { errors } } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),

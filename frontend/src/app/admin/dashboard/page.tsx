@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import api from '../../../services/api';
+import api from '@/services/api';
 import { Loader2, DollarSign, ShoppingCart, Users, Package } from 'lucide-react';
 import { toast } from 'react-toastify';
 

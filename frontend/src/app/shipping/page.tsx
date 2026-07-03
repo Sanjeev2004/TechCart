@@ -1,33 +1,39 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../store/store';
-import { saveShippingAddress } from '../../store/slices/cartSlice';
-import CheckoutSteps from '../../components/CheckoutSteps';
+import { RootState } from '@/store/store';
+import { saveShippingAddress } from '@/store/slices/cartSlice';
+import CheckoutSteps from '@/components/CheckoutSteps';
 
 export default function ShippingPage() {
   const cart = useSelector((state: RootState) => state.cart);
   const { userInfo } = useSelector((state: RootState) => state.auth);
   const { shippingAddress } = cart;
+  const [mounted, setMounted] = useState(false);
 
-  const [address, setAddress] = useState(shippingAddress?.address || '');
+  const [street, setStreet] = useState(shippingAddress?.street || '');
   const [city, setCity] = useState(shippingAddress?.city || '');
-  const [postalCode, setPostalCode] = useState(shippingAddress?.postalCode || '');
+  const [state, setState] = useState(shippingAddress?.state || '');
+  const [zipCode, setZipCode] = useState(shippingAddress?.zipCode || '');
   const [country, setCountry] = useState(shippingAddress?.country || '');
 
   const dispatch = useDispatch();
   const router = useRouter();
 
-  if (!userInfo) {
-    router.push('/login?redirect=/shipping');
-    return null;
-  }
+  useEffect(() => {
+    setMounted(true);
+    if (mounted && !userInfo) {
+      router.push('/login?redirect=/shipping');
+    }
+  }, [userInfo, router, mounted]);
+
+  if (!mounted || !userInfo) return null;
 
   const submitHandler = (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(saveShippingAddress({ address, city, postalCode, country }));
+    dispatch(saveShippingAddress({ street, city, state, zipCode, country }));
     router.push('/payment');
   };
 
@@ -39,42 +45,55 @@ export default function ShippingPage() {
         
         <form onSubmit={submitHandler} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Street Address</label>
             <input
               type="text"
               required
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
+              value={street}
+              onChange={(e) => setStreet(e.target.value)}
               className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-gray-50"
               placeholder="123 Main St"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
-            <input
-              type="text"
-              required
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-gray-50"
-              placeholder="New York"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
+              <input
+                type="text"
+                required
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-gray-50"
+                placeholder="New York"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
+              <input
+                type="text"
+                required
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-gray-50"
+                placeholder="NY"
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Postal Code</label>
-            <input
-              type="text"
-              required
-              value={postalCode}
-              onChange={(e) => setPostalCode(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-gray-50"
-              placeholder="10001"
-            />
-          </div>
-
-          <div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Zip Code</label>
+              <input
+                type="text"
+                required
+                value={zipCode}
+                onChange={(e) => setZipCode(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-gray-50"
+                placeholder="10001"
+              />
+            </div>
+            <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
             <input
               type="text"

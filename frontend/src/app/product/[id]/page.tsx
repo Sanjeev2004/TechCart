@@ -5,12 +5,15 @@ import { useParams, useRouter } from 'next/navigation';
 import { Star, ShoppingCart, ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import api from '../../../services/api';
-import { toast } from 'react-toastify'; // Assume react-toastify will be installed for notifications
+import api from '@/services/api';
+import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '@/store/slices/cartSlice';
 
 export default function ProductDetails() {
   const params = useParams();
   const router = useRouter();
+  const dispatch = useDispatch();
   const id = params.id as string;
 
   const [product, setProduct] = useState<any>(null);
@@ -33,7 +36,14 @@ export default function ProductDetails() {
   }, [id]);
 
   const addToCartHandler = () => {
-    // Dispatch to cart logic here
+    dispatch(addToCart({
+      product: product._id,
+      name: product.name,
+      image: product.images?.[0]?.url || '',
+      price: product.price,
+      quantity: qty,
+      stock: product.stock,
+    }));
     toast.success(`${product.name} added to cart!`);
     router.push('/cart');
   };
@@ -94,7 +104,7 @@ export default function ProductDetails() {
           </div>
 
           <div className="border-t border-b border-gray-100 py-6">
-            <span className="text-4xl font-bold text-gray-900">${product.price.toFixed(2)}</span>
+            <span className="text-4xl font-bold text-gray-900">₹{product.price.toFixed(2)}</span>
             <p className="text-green-600 font-medium mt-2">
               {product.stock > 0 ? `In Stock (${product.stock} available)` : 'Out of Stock'}
             </p>

@@ -3,19 +3,21 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../store/store';
-import { savePaymentMethod } from '../../store/slices/cartSlice';
-import CheckoutSteps from '../../components/CheckoutSteps';
+import { RootState } from '@/store/store';
+import { savePaymentMethod } from '@/store/slices/cartSlice';
+import CheckoutSteps from '@/components/CheckoutSteps';
 
 export default function PaymentPage() {
   const { shippingAddress, paymentMethod: savedMethod } = useSelector((state: RootState) => state.cart);
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
   
   useEffect(() => {
-    if (!shippingAddress?.address) {
+    setMounted(true);
+    if (mounted && !shippingAddress?.street) {
       router.push('/shipping');
     }
-  }, [shippingAddress, router]);
+  }, [shippingAddress, router, mounted]);
 
   const [paymentMethod, setPaymentMethod] = useState(savedMethod || 'Stripe');
   const dispatch = useDispatch();
@@ -25,6 +27,8 @@ export default function PaymentPage() {
     dispatch(savePaymentMethod(paymentMethod));
     router.push('/placeorder');
   };
+
+  if (!mounted) return null;
 
   return (
     <div className="max-w-xl mx-auto py-8">

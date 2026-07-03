@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../store/store';
+import { RootState } from '@/store/store';
 import { useRouter } from 'next/navigation';
-import api from '../../services/api';
-import { setCredentials } from '../../store/slices/authSlice';
+import api from '@/services/api';
+import { setCredentials } from '@/store/slices/authSlice';
 import { Loader2, CheckCircle, XCircle } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'react-toastify';

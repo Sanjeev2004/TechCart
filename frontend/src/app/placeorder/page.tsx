@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../store/store';
-import { clearCartItems } from '../../store/slices/cartSlice';
-import CheckoutSteps from '../../components/CheckoutSteps';
-import api from '../../services/api';
+import { RootState } from '@/store/store';
+import { clearCartItems } from '@/store/slices/cartSlice';
+import CheckoutSteps from '@/components/CheckoutSteps';
+import api from '@/services/api';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 
@@ -16,14 +16,18 @@ export default function PlaceOrderPage() {
   const dispatch = useDispatch();
   const cart = useSelector((state: RootState) => state.cart);
   const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (!cart.shippingAddress.address) {
-      router.push('/shipping');
-    } else if (!cart.paymentMethod) {
-      router.push('/payment');
+    setMounted(true);
+    if (mounted) {
+      if (!cart.shippingAddress.street) {
+        router.push('/shipping');
+      } else if (!cart.paymentMethod) {
+        router.push('/payment');
+      }
     }
-  }, [cart.shippingAddress, cart.paymentMethod, router]);
+  }, [cart.shippingAddress, cart.paymentMethod, router, mounted]);
 
   const addDecimals = (num: number) => {
     return (Math.round(num * 100) / 100).toFixed(2);
@@ -55,6 +59,8 @@ export default function PlaceOrderPage() {
     }
   };
 
+  if (!mounted) return null;
+
   return (
     <div className="max-w-6xl mx-auto py-8">
       <CheckoutSteps step1 step2 step3 step4 />
@@ -62,10 +68,10 @@ export default function PlaceOrderPage() {
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
             <h2 className="text-xl font-bold text-gray-900 mb-4 pb-2 border-b">Shipping</h2>
-            <p className="text-gray-700">
-              <strong>Address: </strong>
-              {cart.shippingAddress.address}, {cart.shippingAddress.city}{' '}
-              {cart.shippingAddress.postalCode}, {cart.shippingAddress.country}
+            <p className="mt-2 text-gray-700">
+              {cart.shippingAddress.street}, {cart.shippingAddress.city},{' '}
+              {cart.shippingAddress.state}, {cart.shippingAddress.zipCode},{' '}
+              {cart.shippingAddress.country}
             </p>
           </div>
 
@@ -91,8 +97,8 @@ export default function PlaceOrderPage() {
                         {item.name}
                       </Link>
                     </div>
-                    <div className="text-gray-700 font-medium">
-                      {item.quantity} x ${item.price.toFixed(2)} = ${(item.quantity * item.price).toFixed(2)}
+                    <div className="text-gray-900 font-medium whitespace-nowrap">
+                      {item.quantity} x ₹{addDecimals(item.price)} = <span className="font-bold">₹{addDecimals(item.quantity * item.price)}</span>
                     </div>
                   </li>
                 ))}
@@ -104,22 +110,22 @@ export default function PlaceOrderPage() {
         <div>
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-24">
             <h2 className="text-xl font-bold text-gray-900 mb-4 pb-2 border-b">Order Summary</h2>
-            <div className="space-y-3 text-gray-700 mb-6">
-              <div className="flex justify-between">
+            <div className="space-y-4 mb-6">
+              <div className="flex justify-between items-center text-gray-600">
                 <span>Items:</span>
-                <span>${addDecimals(itemsPrice)}</span>
+                <span className="font-medium text-gray-900">₹{addDecimals(itemsPrice)}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center text-gray-600">
                 <span>Shipping:</span>
-                <span>${addDecimals(shippingPrice)}</span>
+                <span className="font-medium text-gray-900">₹{addDecimals(shippingPrice)}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center text-gray-600">
                 <span>Tax:</span>
-                <span>${addDecimals(taxPrice)}</span>
+                <span className="font-medium text-gray-900">₹{addDecimals(taxPrice)}</span>
               </div>
-              <div className="flex justify-between font-bold text-xl text-gray-900 pt-4 border-t">
+              <div className="flex justify-between items-center text-xl font-bold text-gray-900 pt-4 border-t border-gray-100">
                 <span>Total:</span>
-                <span>${addDecimals(totalPrice)}</span>
+                <span>₹{addDecimals(totalPrice)}</span>
               </div>
             </div>
 

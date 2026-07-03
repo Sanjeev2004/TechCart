@@ -5,12 +5,8 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'via.placeholder.com',
+        hostname: '**',
       },
-      {
-        protocol: 'https',
-        hostname: 'res.cloudinary.com',
-      }
     ],
   },
   transpilePackages: ['lucide-react'],
