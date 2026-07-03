@@ -1,19 +1,20 @@
-# E-COMM: Full-Stack E-Commerce Platform
+# TechCart: Full-Stack E-Commerce Platform
 
-A production-ready, highly scalable full-stack e-commerce application built with Next.js 15, Node.js, Express, MongoDB, and Redux Toolkit. This project serves as an advanced SDE resume project, demonstrating modern web development best practices, secure authentication, API design, testing, and containerization.
+A production-ready, highly scalable full-stack e-commerce application built with Next.js 15, Node.js, Express, MongoDB, and Redux Toolkit. This project serves as an advanced Software Development Engineer (SDE) portfolio project, demonstrating modern web development best practices, secure authentication, robust RESTful API design, automated testing, and containerization.
 
-## 🌟 Key Features
+## Table of Contents
+- [Architecture](#architecture)
+- [Key Features](#key-features)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [Installation and Setup](#installation-and-setup)
+- [Environment Variables](#environment-variables)
+- [API Documentation](#api-documentation)
+- [Continuous Integration and Deployment](#continuous-integration-and-deployment)
 
-- **🛍️ Complete Product Management**: Advanced search, filtering, pagination, and Cloudinary image uploads.
-- **🔐 Secure Authentication**: JWT, HttpOnly cookies, password hashing (bcrypt), and Role-Based Access Control (Admin/Customer).
-- **🛒 Persistent Shopping Cart & Wishlist**: MongoDB-backed cart and seamless wishlist-to-cart conversion.
-- **💳 Payment & Order Processing**: Stripe integration and automated PDF Invoice generation.
-- **📊 Admin Dashboard**: Full CRUD management and analytics visualization.
-- **⚡ Performance Optimized**: `next/image` implementation, server components, and debounced search.
+## Architecture
 
-## 🏗️ Architecture
-
-The application follows a decoupled client-server architecture, utilizing a Service Layer pattern on the backend for clean code organization.
+The application follows a decoupled client-server architecture, utilizing a Service Layer pattern on the backend for clean code organization and separation of concerns.
 
 ```mermaid
 graph TD
@@ -36,80 +37,123 @@ graph TD
     end
 ```
 
-## 🛠️ Tech Stack
+## Key Features
+
+- **Product Management:** Advanced search, dynamic filtering, server-side pagination, and Cloudinary-backed image uploads.
+- **Authentication & Authorization:** Secure JSON Web Token (JWT) implementation utilizing HttpOnly cookies, bcrypt password hashing, and Role-Based Access Control (Admin vs. Customer).
+- **Shopping Cart & Wishlist:** MongoDB-backed cart persistence and seamless wishlist-to-cart state management via Redux Toolkit.
+- **Payment Processing:** Integrated Stripe API for secure checkout flows and automated PDF Invoice generation upon successful payment.
+- **Admin Dashboard:** Full CRUD management interfaces for Products, Users, and Orders, supplemented by a data analytics visualization panel.
+- **Performance Optimization:** Leveraged Next.js Image component for optimized asset delivery, implement custom debouncing for search inputs, and configured Next.js standalone builds.
+
+## Technology Stack
 
 **Frontend:**
-- Next.js 15 (App Router)
-- React, TypeScript
-- Tailwind CSS
-- Redux Toolkit (State Management)
-- Axios, React Hook Form, Zod
+- Framework: Next.js 15 (App Router)
+- Language: TypeScript
+- Styling: Tailwind CSS
+- State Management: Redux Toolkit
+- Utilities: Axios, React Hook Form, Zod
 
 **Backend:**
-- Node.js, Express.js
-- MongoDB, Mongoose
-- JSON Web Tokens (JWT)
-- Stripe, Cloudinary, PDFKit
+- Runtime: Node.js
+- Framework: Express.js
+- Language: TypeScript
+- Database: MongoDB via Mongoose
+- Security: JSON Web Tokens (JWT), bcrypt
 
-**DevOps & Testing:**
-- Docker & Docker Compose
-- GitHub Actions CI/CD
-- Jest, Supertest
+**DevOps & Quality Assurance:**
+- Containerization: Docker & Docker Compose
+- CI/CD: GitHub Actions
+- Testing: Jest, Supertest
+- Deployment: Vercel (Frontend), Render (Backend)
 
-## 🚀 Local Installation
+## Project Structure
+
+The repository is organized into a monorepo structure separating the client and server codebases.
+
+- `/frontend` - Contains the Next.js application, React components, Redux slices, and UI assets.
+- `/backend` - Contains the Express.js API, Mongoose models, controllers, middleware, and business logic.
+- `.github/workflows` - Contains the CI/CD pipeline definitions for automated testing and linting.
+
+## Installation and Setup
 
 ### Prerequisites
-- Node.js 18+
-- Docker & Docker Compose (Optional)
-- MongoDB URI
-- Stripe & Cloudinary API Keys
+- Node.js (v18 or higher)
+- Docker and Docker Compose (Optional, for containerized environments)
+- MongoDB instance (Local or Atlas)
+- API Keys for Stripe and Cloudinary
 
 ### Method 1: Docker (Recommended)
 1. Clone the repository.
-2. Ensure you have a `.env` file in the root containing your `MONGO_URI`, `JWT_SECRET`, etc.
-3. Run the stack:
+2. Create a `.env` file in the root directory mirroring the variables listed below.
+3. Build and run the stack using Docker Compose:
    ```bash
    docker-compose up --build
    ```
+4. Access the frontend at `http://localhost:3000` and the backend API at `http://localhost:5000`.
 
-### Method 2: Manual
+### Method 2: Manual Setup
 1. Clone the repository.
-2. **Backend**:
+2. Setup Backend:
    ```bash
    cd backend
    npm install
    npm run build
    npm run dev
    ```
-3. **Frontend**:
+3. Setup Frontend:
    ```bash
    cd frontend
    npm install
    npm run dev
    ```
 
-## 📡 API Documentation
+## Environment Variables
 
-### Auth
-- `POST /api/auth/register` - Register a new user
-- `POST /api/auth/login` - Authenticate user & get token
-- `POST /api/auth/logout` - Clear HttpOnly cookie
+Ensure the following environment variables are set in the `backend/.env` file:
+
+- `NODE_ENV`: development or production
+- `PORT`: 5000
+- `MONGO_URI`: Your MongoDB connection string
+- `JWT_SECRET`: Secure string for token signing
+- `CLOUDINARY_CLOUD_NAME`: Cloudinary configuration
+- `CLOUDINARY_API_KEY`: Cloudinary configuration
+- `CLOUDINARY_API_SECRET`: Cloudinary configuration
+- `STRIPE_SECRET_KEY`: Stripe payment configuration
+
+## API Documentation
+
+The backend exposes a comprehensive RESTful API. Below is a subset of the core endpoints:
+
+### Authentication
+- `POST /api/auth/register` - Register a new user profile
+- `POST /api/auth/login` - Authenticate user credentials and return an HttpOnly cookie
+- `POST /api/auth/logout` - Clear the active session and HttpOnly cookie
 
 ### Products
-- `GET /api/products` - Get all products (supports `?keyword=`)
-- `GET /api/products/:id` - Get specific product
-- `POST /api/products` - Create product (Admin)
+- `GET /api/products` - Retrieve a paginated list of products (supports `?keyword=` query parameters)
+- `GET /api/products/:id` - Retrieve specific product details
+- `POST /api/products` - Create a new product entry (Requires Admin privileges)
+- `PUT /api/products/:id` - Update an existing product (Requires Admin privileges)
+- `DELETE /api/products/:id` - Remove a product (Requires Admin privileges)
 
 ### Orders
-- `POST /api/orders` - Create new order
-- `GET /api/orders/:id` - Get order details
-- `PUT /api/orders/:id/pay` - Update order to paid
-- `GET /api/orders/:id/invoice` - Download PDF Invoice
+- `POST /api/orders` - Submit a new order
+- `GET /api/orders/:id` - Retrieve order details by ID
+- `PUT /api/orders/:id/pay` - Mark an order as paid (Triggered post-Stripe validation)
+- `GET /api/orders/:id/invoice` - Download a generated PDF invoice for the order
 
-## 🛡️ CI/CD & Deployment
-This repository is configured with **GitHub Actions** (`.github/workflows/ci.yml`) to automatically lint, type-check, and run Jest tests on every push. 
-- **Frontend** deployment configuration is provided via `vercel.json`.
-- **Backend** deployment configuration is provided via `render.yaml`.
+## Continuous Integration and Deployment
+
+This repository utilizes GitHub Actions (`.github/workflows/ci.yml`) to enforce code quality. On every push to the `main` branch, the CI pipeline automatically:
+1. Installs dependencies.
+2. Executes TypeScript compilation checks.
+3. Runs the Jest test suite across the backend API.
+
+Deployment configurations are included within the repository:
+- **Vercel** (`vercel.json`): Configured for Next.js frontend deployment.
+- **Render** (`render.yaml`): Infrastructure as Code (IaC) configuration for deploying the Express backend.
 
 ---
-*Built as an SDE Portfolio Project.*
+*Developed as a comprehensive Software Engineering portfolio project.*
