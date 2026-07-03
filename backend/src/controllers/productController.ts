@@ -40,8 +40,8 @@ export const getProducts = async (req: Request, res: Response, next: NextFunctio
       }
     }
 
-    const count = await Product.countDocuments(filter);
-    const products = await Product.find(filter)
+    const count = await Product.countDocuments(filter as any);
+    const products = await Product.find(filter as any)
       .sort(sortObj)
       .limit(pageSize)
       .skip(pageSize * (page - 1))

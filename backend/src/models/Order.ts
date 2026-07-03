@@ -32,6 +32,8 @@ export interface IOrder extends Document {
   isDelivered: boolean;
   deliveredAt?: Date;
   orderStatus: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const orderSchema = new Schema<IOrder>(

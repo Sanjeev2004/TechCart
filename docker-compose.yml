@@ -1,6 +1,16 @@
 version: '3.8'
 
 services:
+  mongodb:
+    image: mongo:latest
+    container_name: ecomm_mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - ecomm_mongo_data:/data/db
+    networks:
+      - ecomm-network
+
   backend:
     build:
       context: ./backend
@@ -17,6 +27,9 @@ services:
       - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
       - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+    depends_on:
+      - mongodb
     restart: unless-stopped
     networks:
       - ecomm-network
@@ -40,3 +53,6 @@ services:
 networks:
   ecomm-network:
     driver: bridge
+
+volumes:
+  ecomm_mongo_data:
